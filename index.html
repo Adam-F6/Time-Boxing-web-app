@@ -1,130 +1,154 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Timebox Pro - Professional Calendar Management</title>
+    <title>Timebox Pro - Professional Time Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
+            --success: #10b981;
+            --success-dark: #059669;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --bg: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
+            --text: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border: #e2e8f0;
+            --border-light: #f1f5f9;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
+            --task-height: 64px;
         }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f8fafc;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-secondary);
+            color: var(--text);
+            line-height: 1.5;
             min-height: 100vh;
-            color: #1e293b;
-            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
         }
 
+        /* App Layout */
         .app-container {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: var(--bg);
+            border-right: 1px solid var(--border);
             display: flex;
+            flex-direction: column;
             height: 100vh;
+            position: sticky;
+            top: 0;
             overflow: hidden;
         }
 
-        /* Sidebar Styles */
-        .sidebar {
-            width: 360px;
-            background: #0f172a; /* Dark Sidebar */
-            color: #f1f5f9;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 4px 0 24px rgba(0, 0, 0, 0.1);
-            z-index: 10;
-        }
-
         .sidebar-header {
-            padding: 32px 28px 24px;
-            border-bottom: 1px solid #1e293b;
+            padding: 24px;
+            background: var(--primary);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
         }
 
         .logo {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 700;
+            color: white;
             letter-spacing: -0.5px;
-            margin-bottom: 8px;
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
-        .logo-icon {
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
+        .logo i {
+            font-size: 20px;
+            opacity: 0.9;
         }
 
         .tagline {
             font-size: 13px;
-            color: #94a3b8;
+            color: rgba(255,255,255,0.75);
             font-weight: 400;
+            margin-top: 4px;
+            margin-left: 30px;
         }
 
         .sidebar-content {
-            padding: 28px;
+            padding: 24px;
             overflow-y: auto;
             flex: 1;
         }
 
-        .form-card {
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 20px;
-        }
-
         .section-title {
-            font-size: 14px;
+            font-size: 11px;
             font-weight: 600;
-            color: #94a3b8;
+            color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
-        .form-group {
-            margin-bottom: 20px;
-        }
+        .form-group { margin-bottom: 16px; }
 
         .form-label {
             display: block;
             font-size: 13px;
-            font-weight: 600;
-            color: #cbd5e1;
-            margin-bottom: 8px;
-            letter-spacing: 0.2px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
         }
 
         .form-input {
             width: 100%;
-            padding: 12px 16px;
-            border: 1px solid #334155;
+            padding: 10px 14px;
+            border: 1px solid var(--border);
             border-radius: 8px;
             font-size: 14px;
-            background: #0f172a;
-            color: white;
-            transition: all 0.2s;
+            background: var(--bg);
+            color: var(--text);
+            transition: all 0.15s ease;
             font-family: inherit;
         }
 
         .form-input:focus {
             outline: none;
-            border-color: #6366f1;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
         }
 
         .form-input::placeholder {
-            color: #475569;
+            color: var(--text-muted);
+        }
+
+        /* Date input readonly style */
+        .form-input[readonly] {
+            background: var(--bg-tertiary);
+            cursor: default;
+        }
+
+        .date-hint {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 4px;
         }
 
         .time-grid {
@@ -135,363 +159,873 @@
 
         .btn-primary {
             width: 100%;
-            padding: 14px 20px;
-            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            padding: 12px 16px;
+            background: var(--primary);
             color: white;
             border: none;
             border-radius: 8px;
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
-            letter-spacing: 0.3px;
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+            transition: all 0.15s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
-        .btn-primary:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+        .btn-primary:hover { 
+            background: var(--primary-dark);
         }
 
         .btn-primary:active {
-            transform: translateY(0);
+            transform: scale(0.98);
+        }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            margin-top: 10px;
+        }
+
+        .btn-secondary:hover { 
+            background: var(--bg-secondary);
+            border-color: var(--text-muted);
         }
 
         /* Main Content */
         .main-content {
-            flex: 1;
             display: flex;
             flex-direction: column;
-            background: #f1f5f9;
-            overflow: hidden;
+            min-width: 0;
+            background: var(--bg-secondary);
         }
 
         .top-bar {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid #e2e8f0;
-            padding: 20px 32px;
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            z-index: 5;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        .date-display {
+        .date-info {
             display: flex;
             flex-direction: column;
         }
 
         .current-date {
-            font-size: 22px;
-            font-weight: 800;
-            color: #1e293b;
-            letter-spacing: -0.5px;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: -0.3px;
         }
 
         .current-day {
             font-size: 13px;
-            color: #64748b;
+            color: var(--text-muted);
+            margin-top: 2px;
             font-weight: 500;
         }
 
-        .date-navigation {
-            display: flex;
+        /* Adding digital clock styles */
+        .digital-clock {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary);
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -0.5px;
+        }
+
+        .clock-seconds {
+            font-size: 18px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .clock-period {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            margin-left: 4px;
+        }
+
+        .date-navigation { 
+            display: flex; 
             gap: 8px;
             align-items: center;
         }
 
         .nav-btn {
-            padding: 10px 18px;
-            background: white;
-            color: #475569;
-            border: 1px solid #cbd5e1;
+            padding: 8px 16px;
+            background: var(--bg);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
             border-radius: 8px;
             font-size: 13px;
-            font-weight: 600;
+            font-weight: 500;
             cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            transition: all 0.15s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        .nav-btn:hover {
-            background: #f1f5f9;
-            border-color: #94a3b8;
-            transform: translateY(-1px);
+        .nav-btn:hover { 
+            background: var(--bg-secondary);
+            border-color: var(--text-muted);
         }
 
         .nav-btn.today {
-            background: #0f172a;
+            background: var(--primary);
             color: white;
-            border: 1px solid #0f172a;
+            border-color: var(--primary);
         }
 
         .nav-btn.today:hover {
-            background: #1e293b;
+            background: var(--primary-dark);
+            border-color: var(--primary-dark);
         }
 
-        /* Calendar Table */
+        /* Calendar Container */
         .calendar-container {
             flex: 1;
             overflow-y: auto;
-            padding: 24px 32px;
+            padding: 24px;
         }
 
-        .schedule-table {
-            width: 100%;
-            background: white;
-            border-radius: 16px;
-            border-collapse: separate;
-            border-spacing: 0;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        .schedule-wrapper {
+            background: var(--bg);
+            border-radius: 12px;
+            border: 1px solid var(--border);
             overflow: hidden;
+            box-shadow: var(--shadow-sm);
         }
 
-        .schedule-table thead {
-            background: #f8fafc;
-            color: #475569;
+        .schedule-header {
+            display: grid;
+            grid-template-columns: 90px 1fr;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border);
         }
 
-        .schedule-table th {
-            padding: 16px 20px;
-            text-align: left;
-            font-size: 12px;
-            font-weight: 700;
+        .schedule-header-cell {
+            padding: 12px 16px;
+            font-size: 11px;
+            font-weight: 600;
             letter-spacing: 0.5px;
             text-transform: uppercase;
-            border-bottom: 1px solid #e2e8f0;
+            color: var(--text-muted);
         }
 
-        .schedule-table th:first-child {
-            width: 120px;
+        .schedule-header-cell:first-child {
             text-align: center;
-            border-right: 1px solid #f1f5f9;
+            border-right: 1px solid var(--border);
         }
 
-        .schedule-table tbody tr {
-            transition: background 0.2s;
+        .schedule-body { position: relative; }
+
+        .time-row {
+            display: grid;
+            grid-template-columns: 90px 1fr;
+            min-height: var(--task-height);
+            border-bottom: 1px solid var(--border-light);
         }
 
-        .schedule-table tbody tr:hover {
-            background: #f8fafc;
-        }
-
-        .schedule-table tbody tr:last-child {
-            border-bottom: none;
-        }
-
-        .schedule-table td {
-            padding: 12px;
-            vertical-align: top;
-            border-bottom: 1px solid #f1f5f9;
-        }
+        .time-row:last-child { border-bottom: none; }
 
         .time-cell {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            color: var(--text-muted);
+            font-size: 12px;
+            border-right: 1px solid var(--border-light);
+            background: var(--bg);
+            padding: 8px;
             text-align: center;
-            font-weight: 600;
-            color: #64748b;
-            font-size: 13px;
-            background: #fff;
-            border-right: 1px solid #f1f5f9;
         }
 
-        .task-cell {
-            min-height: 40px;
+        .drop-zone {
+            position: relative;
+            transition: background 0.15s ease;
+            padding: 8px;
+            min-height: calc(var(--task-height) - 16px);
+            display: flex;
+            align-items: center;
         }
 
+        .drop-zone.drag-over { 
+            background: rgba(99, 102, 241, 0.08); 
+        }
+
+        /* Task Block - Normal State */
         .task-block {
-            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            background: var(--primary);
             border-radius: 8px;
-            padding: 14px 16px;
-            margin-bottom: 8px;
+            padding: 10px 14px;
             color: white;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.2);
-            border-left: 4px solid rgba(255, 255, 255, 0.3);
+            cursor: grab;
+            transition: all 0.15s ease;
+            display: flex;
+            align-items: center;
+            box-shadow: var(--shadow-sm);
+            width: 100%;
+            min-height: 48px;
+        }
+
+        .task-block:active { cursor: grabbing; }
+
+        .task-block.dragging {
+            opacity: 0.5;
+            transform: scale(0.98);
         }
 
         .task-block:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3);
+            box-shadow: var(--shadow);
+            transform: translateY(-1px);
         }
 
+        /* Completed task is now green instead of gray */
         .task-block.completed {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            opacity: 0.85;
-            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+            background: var(--success);
+        }
+
+        .task-block.completed:hover {
+            background: var(--success-dark);
+        }
+
+        .task-block.completed .task-title { 
             text-decoration: line-through;
-            text-decoration-color: rgba(255,255,255,0.5);
+            opacity: 0.9;
+        }
+
+        .task-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .task-info {
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
         }
 
         .task-title {
             font-weight: 600;
-            font-size: 14px;
-            margin-bottom: 6px;
+            font-size: 13px;
+            line-height: 1.3;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .task-time {
-            font-size: 12px;
-            opacity: 0.9;
-            margin-bottom: 10px;
+            font-size: 11px;
+            opacity: 0.85;
+            margin-top: 2px;
+            font-weight: 400;
         }
 
         .task-actions {
             display: flex;
-            gap: 6px;
+            gap: 4px;
+            flex-shrink: 0;
         }
 
         .task-btn {
-            padding: 5px 10px;
-            background: rgba(255, 255, 255, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
             color: white;
-            border-radius: 5px;
+            border-radius: 6px;
             font-size: 11px;
-            font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            text-decoration: none;
+            transition: all 0.15s ease;
         }
 
         .task-btn:hover {
-            background: rgba(255, 255, 255, 0.25);
+            background: rgba(255, 255, 255, 0.3);
         }
 
-        /* Responsive Design */
+        /* Toast */
+        #toastContainer {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 360px;
+        }
+
+        .toast-notification {
+            background: var(--bg);
+            color: var(--text);
+            padding: 14px 16px;
+            border-radius: 10px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            opacity: 0;
+            transform: translateX(20px);
+            transition: all 0.2s ease;
+        }
+
+        .toast-notification.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .toast-icon { 
+            font-size: 18px; 
+            flex-shrink: 0;
+        }
+
+        .toast-notification.success .toast-icon { color: var(--success); }
+        .toast-notification.error .toast-icon { color: var(--danger); }
+        .toast-notification.info .toast-icon { color: var(--primary); }
+        
+        .toast-message { 
+            font-size: 14px; 
+            font-weight: 500; 
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1001;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .modal-overlay.show { display: flex; opacity: 1; }
+
+        .modal-content {
+            background: var(--bg);
+            padding: 28px;
+            border-radius: 16px;
+            box-shadow: var(--shadow-xl);
+            width: 90%;
+            max-width: 380px;
+            text-align: center;
+        }
+
+        .modal-icon {
+            width: 56px;
+            height: 56px;
+            background: #fef2f2;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+        }
+
+        .modal-icon i {
+            font-size: 24px;
+            color: var(--danger);
+        }
+
+        .modal-content p {
+            font-size: 15px;
+            margin-bottom: 20px;
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .modal-actions button {
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .modal-actions .btn-secondary {
+            background: var(--bg);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+            margin-top: 0;
+            width: auto;
+        }
+
+        .modal-actions .btn-secondary:hover {
+            background: var(--bg-secondary);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+            border: none;
+        }
+
+        .btn-danger:hover { 
+            background: #dc2626;
+        }
+
+        /* Mobile Menu Toggle */
+        .mobile-menu-btn {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-size: 22px;
+            cursor: pointer;
+            z-index: 200;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.15s ease;
+        }
+
+        .mobile-menu-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .mobile-menu-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Sidebar Overlay */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(2px);
+            z-index: 250;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+        }
+
+        .sidebar-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Responsive - Tablet */
         @media (max-width: 1024px) {
-            .sidebar {
-                width: 320px;
+            .app-container {
+                grid-template-columns: 280px 1fr;
+            }
+            
+            .calendar-container {
+                padding: 20px;
+            }
+            
+            .top-bar {
+                padding: 14px 20px;
+            }
+
+            .current-date {
+                font-size: 18px;
             }
         }
 
+        /* Responsive - Mobile */
         @media (max-width: 768px) {
             .app-container {
-                flex-direction: column;
-                overflow-y: auto;
-                height: auto;
+                display: block;
             }
 
             .sidebar {
+                position: fixed;
+                left: -100%;
+                top: 0;
                 width: 100%;
-                height: auto;
-                border-right: none;
-                border-bottom: 1px solid #e2e8f0;
+                max-width: 320px;
+                height: 100vh;
+                z-index: 300;
+                transition: left 0.3s ease;
+                box-shadow: var(--shadow-xl);
             }
 
-            .main-content {
-                height: auto;
-                min-height: 100vh;
+            .sidebar.open {
+                left: 0;
             }
 
+            .mobile-menu-btn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .main-content { 
+                min-height: 100vh; 
+            }
+            
             .top-bar {
                 flex-direction: column;
-                gap: 16px;
                 align-items: flex-start;
+                gap: 12px;
+                padding: 16px;
             }
-
+            
             .date-navigation {
                 width: 100%;
-                justify-content: space-between;
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr;
+                gap: 8px;
             }
 
-            .schedule-table th:first-child,
+            .nav-btn {
+                justify-content: center;
+                padding: 10px 12px;
+            }
+
+            .calendar-container { 
+                padding: 16px; 
+            }
+            
+            .schedule-header {
+                grid-template-columns: 80px 1fr;
+            }
+            
+            .time-row {
+                grid-template-columns: 80px 1fr;
+            }
+
             .time-cell {
-                width: 80px;
-                font-size: 12px;
-                padding: 12px 8px;
+                font-size: 11px;
             }
 
-            .task-cell {
+            #toastContainer { 
+                max-width: calc(100% - 32px); 
+                left: 16px; 
+                right: 16px;
+            }
+
+            .task-actions {
+                gap: 2px;
+            }
+
+            .task-btn {
+                width: 26px;
+                height: 26px;
+            }
+        }
+
+        /* Responsive - Small Mobile */
+        @media (max-width: 480px) {
+            .top-bar { 
+                padding: 12px; 
+            }
+            
+            .current-date { 
+                font-size: 16px; 
+            }
+            
+            .current-day {
+                font-size: 12px;
+            }
+            
+            .nav-btn { 
+                padding: 8px 10px; 
+                font-size: 12px; 
+            }
+
+            .nav-btn i {
+                display: none;
+            }
+            
+            .schedule-header {
+                grid-template-columns: 70px 1fr;
+            }
+            
+            .time-row {
+                grid-template-columns: 70px 1fr;
+                min-height: 56px;
+            }
+            
+            .schedule-header-cell { 
+                padding: 10px 8px;
+                font-size: 10px; 
+            }
+            
+            .time-cell { 
+                font-size: 10px;
+                padding: 4px;
+            }
+            
+            .task-title { 
+                font-size: 12px; 
+            }
+            
+            .task-time { 
+                font-size: 10px; 
+            }
+            
+            .task-btn { 
+                width: 24px; 
+                height: 24px; 
+                font-size: 10px; 
+            }
+            
+            .task-block {
+                padding: 8px 10px;
+                min-height: 40px;
+            }
+
+            .drop-zone {
+                padding: 6px;
+            }
+            
+            .sidebar-content { 
+                padding: 20px; 
+            }
+            
+            .sidebar-header {
+                padding: 20px;
+            }
+            
+            .logo {
+                font-size: 18px;
+            }
+
+            .logo i {
+                font-size: 16px;
+            }
+
+            .tagline {
+                font-size: 12px;
+                margin-left: 26px;
+            }
+
+            .calendar-container {
                 padding: 12px;
+            }
+
+            .schedule-wrapper {
+                border-radius: 10px;
             }
         }
     </style>
 </head>
 <body>
+    <div id="toastContainer"></div>
+    
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
     <div class="app-container">
-        <!-- Sidebar -->
-        <aside class="sidebar">
+        <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <div class="logo">
-                    <div class="logo-icon">⏱</div>
-                    <span>Timebox Pro</span>
+                    <i class="fa-solid fa-clock"></i>
+                    Timebox Pro
                 </div>
                 <div class="tagline">Professional Time Management</div>
             </div>
-            
-            <div class="sidebar-content">
-                <div class="form-card">
-                    <div class="section-title">New Time Block</div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Task Description</label>
-                        <input type="text" id="taskName" class="form-input" placeholder="What would you like to work on?">
-                    </div>
 
+            <div class="sidebar-content">
+                <div class="section-title">Create Task</div>
+                <form id="taskForm" onsubmit="event.preventDefault(); saveTimebox();">
+                    <div class="form-group">
+                        <label class="form-label">Task Name</label>
+                        <input type="text" id="taskName" class="form-input" placeholder="What needs to be done?">
+                    </div>
+                    <!-- Made date field readonly and synced with navigation -->
                     <div class="form-group">
                         <label class="form-label">Date</label>
-                        <input type="date" id="taskDate" class="form-input">
+                        <input type="date" id="taskDate" class="form-input" readonly>
+                        <div class="date-hint">Use navigation buttons to change date</div>
                     </div>
-                    
                     <div class="time-grid">
                         <div class="form-group">
-                            <label class="form-label">Start Hour</label>
+                            <label class="form-label">Start</label>
                             <select id="startTime" class="form-input"></select>
                         </div>
-                        
                         <div class="form-group">
-                            <label class="form-label">End Hour</label>
+                            <label class="form-label">End</label>
                             <select id="endTime" class="form-input"></select>
                         </div>
                     </div>
-                    
-                    <button class="btn-primary" onclick="addTimebox()">
-                        <span>+ Add Time Block</span>
+                    <button type="submit" class="btn-primary" id="submitBtn">
+                        <i class="fa-solid fa-plus"></i>
+                        Add Task
                     </button>
-                </div>
+                    <button type="button" class="btn-secondary" id="cancelEditBtn" style="display: none;" onclick="resetForm()">Cancel</button>
+                </form>
             </div>
         </aside>
 
-        <!-- Main Content -->
         <main class="main-content">
             <div class="top-bar">
-                <div class="date-display">
+                <div class="date-info">
                     <div class="current-date" id="currentDateDisplay"></div>
                     <div class="current-day" id="currentDayDisplay"></div>
                 </div>
-                
+                <!-- Adding digital clock display -->
+                <div class="digital-clock" id="digitalClock"></div>
                 <div class="date-navigation">
-                    <button class="nav-btn" onclick="changeDate(-1)">← Previous</button>
+                    <button class="nav-btn" onclick="changeDate(-1)">
+                        <i class="fa-solid fa-chevron-left"></i> Previous
+                    </button>
                     <button class="nav-btn today" onclick="changeDate(0)">Today</button>
-                    <button class="nav-btn" onclick="changeDate(1)">Next →</button>
+                    <button class="nav-btn" onclick="changeDate(1)">
+                        Next <i class="fa-solid fa-chevron-right"></i>
+                    </button>
                 </div>
             </div>
-            
+
             <div class="calendar-container">
-                <table class="schedule-table">
-                    <thead>
-                        <tr>
-                            <th>Time</th>
-                            <th>Schedule</th>
-                        </tr>
-                    </thead>
-                    <tbody id="scheduleTableBody"></tbody>
-                </table>
+                <div class="schedule-wrapper">
+                    <div class="schedule-header">
+                        <div class="schedule-header-cell">Time</div>
+                        <div class="schedule-header-cell">Tasks</div>
+                    </div>
+                    <div class="schedule-body" id="scheduleBody"></div>
+                </div>
             </div>
         </main>
+    </div>
+
+    <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleSidebar()">
+        <i class="fa-solid fa-plus"></i>
+    </button>
+
+    <div id="confirmModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-icon">
+                <i class="fa-solid fa-trash"></i>
+            </div>
+            <p id="confirmMessage"></p>
+            <div class="modal-actions">
+                <button id="confirmNo" class="btn-secondary">Cancel</button>
+                <button id="confirmYes" class="btn-danger">Delete</button>
+            </div>
+        </div>
     </div>
 
     <script>
         let db;
         let currentDate = new Date();
+        let currentlyEditingId = null;
+        let draggedTaskId = null;
 
-        // IndexedDB Configuration
         const DB_NAME = 'TimeboxDB';
         const STORE_NAME = 'sqlite_store';
         const DB_KEY = 'db_dump';
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            const btn = document.getElementById('mobileMenuBtn');
+            
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('show');
+            
+            if (sidebar.classList.contains('open')) {
+                btn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+            } else {
+                btn.innerHTML = '<i class="fa-solid fa-plus"></i>';
+            }
+        }
+
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            const btn = document.getElementById('mobileMenuBtn');
+            
+            sidebar.classList.remove('open');
+            overlay.classList.remove('show');
+            btn.innerHTML = '<i class="fa-solid fa-plus"></i>';
+        }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast-notification ${type}`;
+
+            const iconSpan = document.createElement('span');
+            iconSpan.className = 'toast-icon';
+            let iconClass = 'fa-solid fa-circle-info';
+            if (type === 'success') iconClass = 'fa-solid fa-circle-check';
+            else if (type === 'error') iconClass = 'fa-solid fa-triangle-exclamation';
+            iconSpan.innerHTML = `<i class="${iconClass}"></i>`;
+
+            const messageSpan = document.createElement('span');
+            messageSpan.className = 'toast-message';
+            messageSpan.textContent = message;
+
+            toast.appendChild(iconSpan);
+            toast.appendChild(messageSpan);
+            container.appendChild(toast);
+
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                toast.addEventListener('transitionend', () => toast.remove());
+            }, 3000);
+        }
+
+        function showConfirm(message) {
+            return new Promise(resolve => {
+                const modal = document.getElementById('confirmModal');
+                document.getElementById('confirmMessage').textContent = message;
+                modal.classList.add('show');
+
+                const close = (value) => {
+                    modal.classList.remove('show');
+                    resolve(value);
+                };
+
+                const yesBtn = document.getElementById('confirmYes');
+                const noBtn = document.getElementById('confirmNo');
+                const newYes = yesBtn.cloneNode(true);
+                const newNo = noBtn.cloneNode(true);
+                yesBtn.parentNode.replaceChild(newYes, yesBtn);
+                noBtn.parentNode.replaceChild(newNo, noBtn);
+                newYes.onclick = () => close(true);
+                newNo.onclick = () => close(false);
+            });
+        }
 
         function openStorage() {
             return new Promise((resolve, reject) => {
@@ -509,9 +1043,9 @@
 
         async function loadDatabase() {
             try {
-                const db = await openStorage();
+                const storage = await openStorage();
                 return new Promise((resolve, reject) => {
-                    const tx = db.transaction(STORE_NAME, 'readonly');
+                    const tx = storage.transaction(STORE_NAME, 'readonly');
                     const store = tx.objectStore(STORE_NAME);
                     const request = store.get(DB_KEY);
                     request.onsuccess = () => resolve(request.result);
@@ -524,9 +1058,9 @@
 
         async function saveDatabase(data) {
             try {
-                const db = await openStorage();
+                const storage = await openStorage();
                 return new Promise((resolve, reject) => {
-                    const tx = db.transaction(STORE_NAME, 'readwrite');
+                    const tx = storage.transaction(STORE_NAME, 'readwrite');
                     const store = tx.objectStore(STORE_NAME);
                     const request = store.put(data, DB_KEY);
                     request.onsuccess = () => resolve();
@@ -537,7 +1071,6 @@
             }
         }
 
-        // Initialize SQL.js and Database
         async function initApp() {
             try {
                 const SQL = await initSqlJs({
@@ -545,23 +1078,18 @@
                 });
 
                 const savedData = await loadDatabase();
-                
-                if (savedData) {
-                    db = new SQL.Database(new Uint8Array(savedData));
-                } else {
-                    db = new SQL.Database();
-                }
-                
-                // Ensure tables exist
-                initTables();
+                db = savedData ? new SQL.Database(new Uint8Array(savedData)) : new SQL.Database();
 
-                // Initial render
+                initTables();
                 populateTimeSelects();
                 setTodayDate();
-                renderScheduleTable();
+                renderSchedule();
+                
+                updateDigitalClock();
+                setInterval(updateDigitalClock, 1000);
             } catch (e) {
                 console.error("Database initialization failed:", e);
-                alert("Could not initialize local database. Please check your internet connection for the SQL engine.");
+                showToast("Failed to load database", "error");
             }
         }
 
@@ -584,16 +1112,16 @@
             saveDatabase(data);
         }
 
-        function generateHours() {
-            const hours = [];
+        function generateTimeSlots() {
+            const slots = [];
             for (let hour = 0; hour < 24; hour++) {
-                for (let minute of [0, 30]) {
+                for (let minute = 0; minute < 60; minute += 30) {
                     const timeStr = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
                     const displayTime = formatTime(hour, minute);
-                    hours.push({ value: timeStr, display: displayTime });
+                    slots.push({ value: timeStr, display: displayTime });
                 }
             }
-            return hours;
+            return slots;
         }
 
         function formatTime(hour, minute) {
@@ -602,30 +1130,68 @@
             return `${displayHour}:${minute.toString().padStart(2, '0')} ${period}`;
         }
 
+        function formatTimeShort(hour) {
+            const period = hour >= 12 ? 'PM' : 'AM';
+            const displayHour = hour > 12 ? hour - 12 : (hour === 0 ? 12 : hour);
+            return `${displayHour}${period}`;
+        }
+
+        function formatTimeFromString(timeStr) {
+            const [hour, minute] = timeStr.split(':').map(Number);
+            return formatTime(hour, minute);
+        }
+
+        function formatTimeRangeShort(startStr, endStr) {
+            const [startHour] = startStr.split(':').map(Number);
+            const [endHour] = endStr.split(':').map(Number);
+            return `${formatTimeShort(startHour)} - ${formatTimeShort(endHour)}`;
+        }
+
         function populateTimeSelects() {
-            const hours = generateHours();
+            const slots = generateTimeSlots();
             const startSelect = document.getElementById('startTime');
             const endSelect = document.getElementById('endTime');
-            
-            hours.forEach(hour => {
-                startSelect.innerHTML += `<option value="${hour.value}">${hour.display}</option>`;
-                endSelect.innerHTML += `<option value="${hour.value}">${hour.display}</option>`;
+
+            slots.forEach(slot => {
+                startSelect.innerHTML += `<option value="${slot.value}">${slot.display}</option>`;
+                endSelect.innerHTML += `<option value="${slot.value}">${slot.display}</option>`;
             });
         }
 
+        function formatDateForInput(date) {
+            const year = date.getFullYear();
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const day = date.getDate().toString().padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function updateDigitalClock() {
+            const now = new Date();
+            let hours = now.getHours();
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            const period = hours >= 12 ? 'PM' : 'AM';
+            
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+            
+            const clockElement = document.getElementById('digitalClock');
+            clockElement.innerHTML = `${hours}:${minutes}<span class="clock-seconds">:${seconds}</span><span class="clock-period">${period}</span>`;
+        }
+
         function setTodayDate() {
-            const today = new Date();
-            const dateStr = today.toISOString().split('T')[0];
-            document.getElementById('taskDate').value = dateStr;
+            currentDate = new Date();
             updateDateDisplay();
         }
 
         function updateDateDisplay() {
             const options = { month: 'long', day: 'numeric', year: 'numeric' };
             document.getElementById('currentDateDisplay').textContent = currentDate.toLocaleDateString('en-US', options);
-            
+
             const dayOptions = { weekday: 'long' };
             document.getElementById('currentDayDisplay').textContent = currentDate.toLocaleDateString('en-US', dayOptions);
+            
+            document.getElementById('taskDate').value = formatDateForInput(currentDate);
         }
 
         function changeDate(days) {
@@ -635,105 +1201,307 @@
                 currentDate.setDate(currentDate.getDate() + days);
             }
             updateDateDisplay();
-            renderScheduleTable();
+            renderSchedule();
         }
 
-        function addTimebox() {
+        function editTimebox(id) {
+            const stmt = db.prepare("SELECT * FROM timeboxes WHERE id = ?");
+            stmt.bind([id]);
+            if (!stmt.step()) {
+                stmt.free();
+                return;
+            }
+            const task = stmt.getAsObject();
+            stmt.free();
+
+            currentlyEditingId = task.id;
+
+            document.getElementById('taskName').value = task.task;
+            currentDate = new Date(task.date + 'T00:00:00');
+            updateDateDisplay();
+            renderSchedule();
+            
+            document.getElementById('startTime').value = task.start;
+            document.getElementById('endTime').value = task.end;
+
+            document.getElementById('submitBtn').innerHTML = '<i class="fa-solid fa-check"></i> Save Changes';
+            document.getElementById('cancelEditBtn').style.display = 'block';
+            document.getElementById('taskName').focus();
+            
+            if (window.innerWidth <= 768) {
+                closeSidebar();
+                setTimeout(() => {
+                    toggleSidebar();
+                }, 100);
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('taskForm').reset();
+            currentlyEditingId = null;
+            document.getElementById('taskDate').value = formatDateForInput(currentDate);
+            document.getElementById('submitBtn').innerHTML = '<i class="fa-solid fa-plus"></i> Add Task';
+            document.getElementById('cancelEditBtn').style.display = 'none';
+        }
+
+        function saveTimebox() {
             const taskName = document.getElementById('taskName').value.trim();
             const taskDate = document.getElementById('taskDate').value;
             const startTime = document.getElementById('startTime').value;
             const endTime = document.getElementById('endTime').value;
-            
+
             if (!taskName || !taskDate || !startTime || !endTime) {
-                alert('Please fill in all fields');
+                showToast('Please fill in all fields', 'error');
                 return;
             }
 
             if (startTime >= endTime) {
-                alert('End time must be after start time');
+                showToast('End time must be after start time', 'error');
                 return;
             }
-            
-            const stmt = db.prepare("INSERT INTO timeboxes (task, date, start, end) VALUES (?, ?, ?, ?)");
-            stmt.run([taskName, taskDate, startTime, endTime]);
-            stmt.free();
-            
+
+            if (isCollision(taskDate, startTime, endTime, currentlyEditingId)) {
+                showToast('This time conflicts with another task', 'error');
+                return;
+            }
+
+            if (currentlyEditingId !== null) {
+                db.run("UPDATE timeboxes SET task = ?, date = ?, start = ?, end = ? WHERE id = ?", 
+                    [taskName, taskDate, startTime, endTime, currentlyEditingId]);
+                showToast('Task updated!', 'success');
+            } else {
+                db.run("INSERT INTO timeboxes (task, date, start, end) VALUES (?, ?, ?, ?)", 
+                    [taskName, taskDate, startTime, endTime]);
+                showToast('Task added!', 'success');
+            }
+
             saveDB();
-            renderScheduleTable();
+            renderSchedule();
+            resetForm();
             
-            document.getElementById('taskName').value = '';
+            if (window.innerWidth <= 768) {
+                closeSidebar();
+            }
         }
 
-        function toggleComplete(id) {
-            // Get current status
+        function isCollision(date, start, end, excludeId) {
+            const toMinutes = (time) => parseInt(time.split(':')[0]) * 60 + parseInt(time.split(':')[1]);
+            const startMin = toMinutes(start);
+            const endMin = toMinutes(end);
+
+            const stmt = db.prepare("SELECT * FROM timeboxes WHERE date = ?");
+            stmt.bind([date]);
+            
+            while (stmt.step()) {
+                const row = stmt.getAsObject();
+                if (excludeId && row.id === excludeId) continue;
+
+                const rowStart = toMinutes(row.start);
+                const rowEnd = toMinutes(row.end);
+
+                if (startMin < rowEnd && endMin > rowStart) {
+                    stmt.free();
+                    return true;
+                }
+            }
+            stmt.free();
+            return false;
+        }
+
+        function toggleComplete(id, event) {
+            event.stopPropagation();
             const result = db.exec(`SELECT completed FROM timeboxes WHERE id = ${id}`);
             if (result.length > 0) {
                 const currentStatus = result[0].values[0][0];
                 const newStatus = currentStatus === 1 ? 0 : 1;
-                
                 db.run(`UPDATE timeboxes SET completed = ${newStatus} WHERE id = ${id}`);
                 saveDB();
-                renderScheduleTable();
+                renderSchedule();
             }
         }
 
-        function deleteTimebox(id) {
-            if(confirm('Are you sure you want to delete this task?')) {
+        async function deleteTimebox(id, event) {
+            event.stopPropagation();
+            const confirmed = await showConfirm('Are you sure you want to delete this task?');
+            if (confirmed) {
                 db.run(`DELETE FROM timeboxes WHERE id = ${id}`);
                 saveDB();
-                renderScheduleTable();
+                renderSchedule();
+                showToast('Task deleted', 'info');
             }
         }
 
-        function renderScheduleTable() {
-            const tableBody = document.getElementById('scheduleTableBody');
+        function handleDragStart(event, taskId) {
+            draggedTaskId = taskId;
+            event.target.classList.add('dragging');
+            event.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragEnd(event) {
+            event.target.classList.remove('dragging');
+            draggedTaskId = null;
+            document.querySelectorAll('.drop-zone').forEach(zone => {
+                zone.classList.remove('drag-over');
+            });
+        }
+
+        function handleDragOver(event) {
+            event.preventDefault();
+            event.dataTransfer.dropEffect = 'move';
+        }
+
+        function handleDragEnter(event) {
+            event.preventDefault();
+            const dropZone = event.target.closest('.drop-zone');
+            if (dropZone && !dropZone.classList.contains('has-task')) {
+                dropZone.classList.add('drag-over');
+            }
+        }
+
+        function handleDragLeave(event) {
+            const dropZone = event.target.closest('.drop-zone');
+            if (dropZone) {
+                dropZone.classList.remove('drag-over');
+            }
+        }
+
+        function handleDrop(event, newStartTime) {
+            event.preventDefault();
+            const dropZone = event.target.closest('.drop-zone');
+            if (dropZone) {
+                dropZone.classList.remove('drag-over');
+            }
+
+            if (!draggedTaskId) return;
+
+            const stmt = db.prepare("SELECT * FROM timeboxes WHERE id = ?");
+            stmt.bind([draggedTaskId]);
+            if (!stmt.step()) {
+                stmt.free();
+                return;
+            }
+            const task = stmt.getAsObject();
+            stmt.free();
+
+            const toMinutes = (time) => parseInt(time.split(':')[0]) * 60 + parseInt(time.split(':')[1]);
+            const fromMinutes = (mins) => {
+                const h = Math.floor(mins / 60);
+                const m = mins % 60;
+                return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+            };
+
+            const oldStart = toMinutes(task.start);
+            const oldEnd = toMinutes(task.end);
+            const duration = oldEnd - oldStart;
+            const newStart = toMinutes(newStartTime);
+            const newEnd = newStart + duration;
+
+            if (newEnd > 24 * 60) {
+                showToast('Task would exceed end of day', 'error');
+                return;
+            }
+
+            const newEndTime = fromMinutes(newEnd);
             const currentDateStr = currentDate.toISOString().split('T')[0];
-            const hours = generateHours();
-            
-            // Fetch all tasks for today
+
+            if (isCollision(currentDateStr, newStartTime, newEndTime, draggedTaskId)) {
+                showToast('This time conflicts with another task', 'error');
+                return;
+            }
+
+            db.run("UPDATE timeboxes SET start = ?, end = ? WHERE id = ?", 
+                [newStartTime, newEndTime, draggedTaskId]);
+            saveDB();
+            renderSchedule();
+            showToast('Task moved!', 'success');
+        }
+
+        function renderSchedule() {
+            const scheduleBody = document.getElementById('scheduleBody');
+            const currentDateStr = currentDate.toISOString().split('T')[0];
+            const slots = generateTimeSlots();
+
             const stmt = db.prepare("SELECT * FROM timeboxes WHERE date = ? ORDER BY start");
             stmt.bind([currentDateStr]);
-            
+
             const tasks = [];
-            while(stmt.step()) {
-                const row = stmt.getAsObject();
-                tasks.push(row);
+            while (stmt.step()) {
+                tasks.push(stmt.getAsObject());
             }
             stmt.free();
 
-            tableBody.innerHTML = hours.map(hour => {
-                const boxesInHour = tasks.filter(tb => tb.start === hour.value);
+            const slotCoverage = {};
+            const toMinutes = (time) => parseInt(time.split(':')[0]) * 60 + parseInt(time.split(':')[1]);
+
+            tasks.forEach(task => {
+                const taskStartMin = toMinutes(task.start);
+                const taskEndMin = toMinutes(task.end);
                 
-                return `
-                    <tr>
-                        <td class="time-cell">${hour.display}</td>
-                        <td class="task-cell">
-                            ${boxesInHour.map(tb => `
-                                <div class="task-block ${tb.completed === 1 ? 'completed' : ''}">
-                                    <div class="task-title">${tb.task}</div>
-                                    <div class="task-time">${formatTimeFromString(tb.start)} - ${formatTimeFromString(tb.end)}</div>
-                                    <div class="task-actions">
-                                        <button class="task-btn" onclick="event.stopPropagation(); toggleComplete(${tb.id})">
-                                            ${tb.completed === 1 ? '↩ Undo' : '✓ Complete'}
-                                        </button>
-                                        <button class="task-btn" onclick="event.stopPropagation(); deleteTimebox(${tb.id})">
-                                            × Delete
-                                        </button>
+                slots.forEach(slot => {
+                    const slotMin = toMinutes(slot.value);
+                    if (slotMin >= taskStartMin && slotMin < taskEndMin) {
+                        if (slotMin === taskStartMin) {
+                            slotCoverage[slot.value] = { task, isStart: true };
+                        } else {
+                            slotCoverage[slot.value] = { task, isStart: false };
+                        }
+                    }
+                });
+            });
+
+            let html = '';
+            for (const slot of slots) {
+                const coverage = slotCoverage[slot.value];
+                
+                if (coverage && !coverage.isStart) {
+                    continue;
+                }
+
+                const task = coverage?.task;
+                const hasTask = !!task;
+
+                const timeDisplay = task ? formatTimeRangeShort(task.start, task.end) : slot.display;
+
+                html += `
+                    <div class="time-row">
+                        <div class="time-cell">${timeDisplay}</div>
+                        <div class="drop-zone ${hasTask ? 'has-task' : ''}" 
+                             ondragover="handleDragOver(event)"
+                             ondragenter="handleDragEnter(event)"
+                             ondragleave="handleDragLeave(event)"
+                             ondrop="handleDrop(event, '${slot.value}')">
+                            ${task ? `
+                                <div class="task-block ${task.completed === 1 ? 'completed' : ''}"
+                                     draggable="true"
+                                     ondragstart="handleDragStart(event, ${task.id})"
+                                     ondragend="handleDragEnd(event)">
+                                    <div class="task-content">
+                                        <div class="task-info">
+                                            <div class="task-title">${task.task}</div>
+                                            <div class="task-time">${formatTimeFromString(task.start)} - ${formatTimeFromString(task.end)}</div>
+                                        </div>
+                                        <div class="task-actions">
+                                            <button class="task-btn" title="Edit" onclick="event.stopPropagation(); editTimebox(${task.id})">
+                                                <i class="fa-solid fa-pen"></i>
+                                            </button>
+                                            <button class="task-btn" title="${task.completed === 1 ? 'Undo' : 'Complete'}" onclick="toggleComplete(${task.id}, event)">
+                                                ${task.completed === 1 ? '<i class="fa-solid fa-rotate-left"></i>' : '<i class="fa-solid fa-check"></i>'}
+                                            </button>
+                                            <button class="task-btn" title="Delete" onclick="deleteTimebox(${task.id}, event)">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
-                            `).join('')}
-                        </td>
-                    </tr>
+                            ` : ''}
+                        </div>
+                    </div>
                 `;
-            }).join('');
+            }
+
+            scheduleBody.innerHTML = html;
         }
 
-        function formatTimeFromString(timeStr) {
-            const [hour, minute] = timeStr.split(':').map(Number);
-            return formatTime(hour, minute);
-        }
-
-        // Start the app
         initApp();
     </script>
 </body>
